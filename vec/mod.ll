@@ -146,3 +146,34 @@ cont:
     %ret = getelementptr [0 x i8], ptr %buf, i32 0, i32 %offset
     ret ptr %ret
 }
+
+; Remove an element from the vector, moving all values after the `idx` to fill the
+; newly empty space
+; 
+; @param vec {%Vec*} The vector
+; @param dest {[size x i8]*} The destination to store the removed element
+; @param idx {i32} the zero based index to be removed
+; @return i1 0 if the idx is out of range 1 if the eleemnt was removed and placed in `dest`
+define i1 @vec_remove(ptr %vec, ptr %dest, i32 %idx) {
+entry:
+    %fmt = alloca [255 x i8]
+    %len = call i32 @vec_len(ptr %vec)
+    %oor = icmp uge i32 %idx, %len
+    br i1 %oor, label %null, label %notnull
+null:
+    ret i1 0
+notnull:
+    %el_size = call i32 @vec_el_size(ptr %vec)
+    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 1
+    %buf = load ptr, ptr %buf_ptr
+    %el = call ptr @vec_get(ptr %vec, i32 %idx)
+    call void @llvm.memcpy.p0.p0.i32(ptr %dest, ptr %el, i32 %el_size, i1 0)
+    %next_el_idx = add i32 %idx, 1
+    %rem_len = sub i32 %len, %next_el_idx
+    %rem_bytes = mul i32 %rem_len, %el_size
+    %next_el = call ptr @vec_get(ptr %vec, i32 %next_el_idx)
+    call void @llvm.memcpy.p0.p0.i32(ptr %el, ptr %next_el, i32 %rem_bytes, i1 0)
+    %new_len = sub i32 %len, 1
+    call void @vec_set_len(ptr %vec, i32 %new_len)
+    ret i1 1
+}

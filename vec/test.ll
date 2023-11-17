@@ -7,6 +7,7 @@ declare i32 @vec_capacity(ptr %vec)
 declare void @vec_bump_capacity(ptr %vec)
 declare void @vec_push(ptr %vec, ptr %element)
 declare ptr @vec_get(ptr %vec, i32 %idx)
+declare ptr @vec_remove(ptr %vec, i32 %idx)
 %Slice = type { i32, ptr }
 %Vec = type { i32, i32, %Slice }
 
@@ -30,7 +31,20 @@ entry:
     %ptr = call ptr @vec_get(ptr %vec, i32 %idx)
     %el = load i32, ptr %ptr
     store [ 25 x i8 ] c"looked up: vec[%u] = %u\0A\00", ptr %fmt
-    call i32 @printf(ptr %fmt, i32 %idx, i32 %el)
+    %len = call i32 @vec_len(ptr %vec)
+    call i32 @printf(ptr %fmt, i32 %idx, i32 %el, i32 %len)
+    ret void
+}
+
+define void @remove_and_print(ptr %vec, i32 %idx) {
+entry:
+    %fmt = alloca [255 x i8]
+    %ptr = alloca i32
+    call i1 @vec_remove(ptr %vec, ptr %ptr, i32 %idx)
+    %el = load i32, ptr %ptr
+    %len = call i32 @vec_len(ptr %vec)
+    store [ 35 x i8 ] c"removed: vec[%u] = %u new len: %u\0A\00", ptr %fmt
+    call i32 @printf(ptr %fmt, i32 %idx, i32 %el, i32 %len)
     ret void
 }
 
@@ -42,8 +56,13 @@ define i32 @main() {
     call void @lookup_and_print(ptr %v, i32 0)
     call void @push_and_print(ptr %v, i32 2)
     call void @push_and_print(ptr %v, i32 3)
+    call void @lookup_and_print(ptr %v, i32 0)
     call void @lookup_and_print(ptr %v, i32 1)
     call void @lookup_and_print(ptr %v, i32 2)
+
+    call void @remove_and_print(ptr %v, i32 2)
+    call void @remove_and_print(ptr %v, i32 1)
+    call void @remove_and_print(ptr %v, i32 0)
     ret i32 0
 }
 
