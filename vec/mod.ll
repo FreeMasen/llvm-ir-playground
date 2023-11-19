@@ -1,31 +1,63 @@
 ; ModuleID = 'vec'
 source_filename = "vec.ll"
 
-; The backing store for the vector
-; @field capacity {i32} The count of elements that can be stored
-; @field buffer {i8*|T*} A raw blob of memory for the elements
-%Slice = type { i32, ptr }
 ; A growable collection of a generic type
 ; @field length {i32} The current element count
 ; @field element_size {i32} The size of each element in the collection
-; @field slice {%Slice} The backing store
-%Vec = type { i32, i32, %Slice }
+; @field capacity {i32} The count of elements that can be stored
+; @field buffer {i8*|T*} A raw blob of memory for the elements
+%Vec = type { i32, i32, i32, ptr }
 
 declare ptr @malloc(i32)
 declare void @free(ptr)
 declare void @llvm.memcpy.p0.p0.i32(ptr, ptr, i32, i1)
 declare void @llvm.memset.p0.i32(ptr, i8, i32, i1)
+declare i32 @printf(ptr, ...)
+; initialize a vector for an element size
+; @param vec {%Vec*} The pointer to initialize
+; @param el_size {i32} The size of each value in the collection
+define void @vec_init(ptr sret(%Vec) %vec, i32 %el_size) {
+entry:
+    call void @vec_init_with_capacity(ptr %vec, i32 %el_size, i32 0)
+    ret void
+}
 
 ; initialize a vector for an element size
 ; @param vec {%Vec*} The pointer to initialize
 ; @param el_size {i32} The size of each value in the collection
-define void @vec_init(ptr %vec, i32 %el_size) {
+define void @vec_init_with_capacity(ptr sret(%Vec) %vec, i32 %el_size, i32 %cap) {
 entry:
+    %fmt = alloca [255 x i8]
+    store [41 x i8] c"vec_init_with_capacity: el: %u, cap: %u\0A\00", ptr %fmt
+    call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
+    ; calculate the size of a %Vec, taking into account the target's ptr width
     %size_ptr = getelementptr [1 x %Vec], ptr null, i32 1
     %size = ptrtoint ptr %size_ptr to i32
-    call void @llvm.memset.p0.i32(ptr align 8 %vec, i8 0, i32 %size, i1 false)
+    ; set the provided %vec to all 0 values
+    call void @llvm.memset.p0.i32(ptr %vec, i8 0, i32 %size, i1 false)
+    ; get the size property pointer from the now zeroed memory
     %el_size_ptr = getelementptr inbounds %Vec, ptr %vec, i32 0, i32 1
+    ; store the element size on the %Vec
     store i32 %el_size, ptr %el_size_ptr
+    ; get the capacity property on %vec
+    call void @vec_set_capacity(ptr %vec, i32 %cap)
+    %done = icmp eq i32 %cap, 0
+    br i1 %done, label %exit, label %nonzero
+nonzero:
+    store [33 x i8] c"vec_init_with_capacity->nonzero\0A\00", ptr %fmt
+    ; calculate the raw bytes needed to store the buffer with a capacity of %cap
+    %buf_size = mul i32 %el_size, %cap
+    ; allocate the buffer
+    %buf = call ptr @malloc(i32 %buf_size)
+    ; get the buffer property on %svec
+    %buf_ptr = getelementptr inbounds %Vec, ptr %vec, i32 0, i32 3
+    ; store the new malloc'd bytes pointer on %slice
+    store ptr %buf, ptr %buf_ptr
+    br label %exit
+exit:
+    store [30 x i8] c"vec_init_with_capacity->exit\0A\00", ptr %fmt
+    
+    call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
     ret void
 }
 
@@ -46,10 +78,10 @@ entry:
 }
 
 ; set the capacity of the Slice in this vec
-define void @vec_set_capacity(ptr %vec, i32 %len) {
+define void @vec_set_capacity(ptr %vec, i32 %cap) {
 entry:
-    %len_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 0
-    store i32 %len, ptr %len_ptr
+    %cap_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2
+    store i32 %cap, ptr %cap_ptr
     ret void
 }
 
@@ -64,8 +96,8 @@ entry:
 ; get the slice capacity from the vector
 define i32 @vec_capacity(ptr %vec) {
 entry:
-    %ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 0
-    %size = load i32, ptr %ptr
+    %cap_ptr = getelementptr inbounds %Vec, ptr %vec, i32 0, i32 2
+    %size = load i32, ptr %cap_ptr
     ret i32 %size
 }
 
@@ -76,7 +108,7 @@ entry:
 ; if the collection is not empty it will double the capacity
 define void @vec_bump_capacity(ptr %vec) {
 entry:
-    %buf_ptr = getelementptr inbounds %Vec, ptr %vec, i32 0, i32 2, i32 1
+    %buf_ptr = getelementptr inbounds %Vec, ptr %vec, i32 0, i32 3
     %cap = call i32 @vec_capacity(ptr %vec)
     %el_size = call i32 @vec_el_size(ptr %vec)
     %empty = icmp eq i32 %cap, 0
@@ -120,7 +152,7 @@ push:
     ; calculate the next vec length
     %next_len = add i32 %len, 1
     ; lookup the slice pointer
-    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 1
+    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 3
     %buf = load ptr, ptr %buf_ptr
     %offset = getelementptr [0 x i8], ptr %buf, i32 0, i32 %offset_idx
     ; copy the element into the offset
@@ -141,7 +173,7 @@ oor:
 cont:
     %el_size = call i32 @vec_el_size(ptr %vec)
     %offset = mul i32 %idx, %el_size
-    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 1
+    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 3
     %buf = load ptr, ptr %buf_ptr
     %ret = getelementptr [0 x i8], ptr %buf, i32 0, i32 %offset
     ret ptr %ret
@@ -164,7 +196,7 @@ null:
     ret i1 0
 notnull:
     %el_size = call i32 @vec_el_size(ptr %vec)
-    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 2, i32 1
+    %buf_ptr = getelementptr %Vec, ptr %vec, i32 0, i32 3
     %buf = load ptr, ptr %buf_ptr
     %el = call ptr @vec_get(ptr %vec, i32 %idx)
     call void @llvm.memcpy.p0.p0.i32(ptr %dest, ptr %el, i32 %el_size, i1 0)
