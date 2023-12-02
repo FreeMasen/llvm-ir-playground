@@ -12,7 +12,7 @@ declare ptr @malloc(i32)
 declare void @free(ptr)
 declare void @llvm.memcpy.p0.p0.i32(ptr, ptr, i32, i1)
 declare void @llvm.memset.p0.i32(ptr, i8, i32, i1)
-declare i32 @printf(ptr, ...)
+; declare i32 @printf(ptr, ...)
 
 ; initialize an array for an element size
 ; @param sa {%SparseArray*} The pointer to initialize
