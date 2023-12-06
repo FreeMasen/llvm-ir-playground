@@ -96,10 +96,12 @@ loopbody:
   %iseven = icmp eq i32 %m, 0
   br i1 %iseven, label %even, label %odd
 even:
-  call void @pop_front(ptr %ll)
+  %f = call ptr @pop_front(ptr %ll)
+  call void @free(ptr %f)
   br label %loopend
 odd:
-  call void @pop_back(ptr %ll)
+  %b = call ptr @pop_back(ptr %ll)
+  call void @free(ptr %b)
   br label %loopend
 loopend:
   call void @print_ll(ptr %ll)
@@ -118,7 +120,8 @@ looptop:
   %done = icmp eq ptr %head, null
   br i1 %done, label %exit, label %loopbody
 loopbody:
-  call ptr @pop_back(ptr %ll)
+  %v = call ptr @pop_back(ptr %ll)
+  call void @free(ptr %v)
   call void @print_ll(ptr %ll)
   %next = call ptr @linked_list_front(ptr %ll)
   br label %looptop
@@ -135,7 +138,8 @@ looptop:
   %done = icmp eq ptr %head, null
   br i1 %done, label %exit, label %loopbody
 loopbody:
-  call ptr @pop_front(ptr %ll)
+  %v = call ptr @pop_front(ptr %ll)
+  call void @free(ptr %v)
   call void @print_ll(ptr %ll)
   %next = call ptr @linked_list_front(ptr %ll)
   br label %looptop
