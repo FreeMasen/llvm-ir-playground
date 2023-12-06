@@ -2,9 +2,9 @@
 ; @field head the first entry in the linked list
 %LinkedList = type { ptr }
 ; A single link in the linked list
-; @field value the value of the node (always an i32 currently)
+; @field value the value of the node
 ; @field next the pointer to the next value in the list, null if this is the tail 
-%Link = type { i32, ptr }
+%Link = type { ptr, ptr }
 
 define i32 @linked_list_size() {
 entry:
@@ -65,11 +65,11 @@ exit:
 
 ; Initialize a single link, with a `null` next and the provided value
 ; @param %dest {Link*} the link to initialize
-; @param %v {i32} the value of this link
-define void @init_link(ptr %dest, i32 %v) {
+; @param %v {ptr} the value of this link
+define void @init_link(ptr %dest, ptr %v) {
   %fmt = alloca [255 x i8]
   %value = getelementptr %Link, ptr %dest, i32 0, i32 0
-  store i32 %v, ptr %value
+  store ptr %v, ptr %value
   %next = getelementptr %Link, ptr %dest, i32 0, i32 1
   store ptr null, ptr %next
   ret void
@@ -100,12 +100,12 @@ exit:
 ; @param %list {Link*} Some link in the list to be appended
 ; @param %entry {Link*} The link to append
 ; @param %v {i32} The new value
-define void @append(ptr %list, ptr %entry, i32 %v) {
+define void @append(ptr %list, ptr %entry, ptr %v) {
 start:
   %fmt = alloca [255 x i8]
   %tail = call %Link* @find_tail(ptr %list)
   %dest_ptr = getelementptr %Link, ptr %tail, i32 0, i32 1
-  call void @init_link(ptr %entry, i32 %v)
+  call void @init_link(ptr %entry, ptr %v)
   store ptr %entry, ptr %dest_ptr
   ret void
 }
@@ -114,9 +114,9 @@ start:
 ; @param %list {Link*} The start of the list to prepend
 ; @param %entry {Link*} The entry to prepend
 ; @param %v {i32} The new value
-define void @prepend(ptr %list, ptr %entry, i32 %v) {
+define void @prepend(ptr %list, ptr %entry, ptr %v) {
 start:
-  call void @init_link(ptr %entry, i32 %v)
+  call void @init_link(ptr %entry, ptr %v)
   %dest_ptr = getelementptr %Link, ptr %entry, i32 0, i32 1
   store ptr %list, ptr %dest_ptr
   ret void
@@ -136,11 +136,11 @@ entry:
   ret ptr %el
 }
 
-define i32 @link_value(ptr %node) {
+define ptr @link_value(ptr %node) {
 entry:
   %v_ptr = getelementptr %Link, ptr %node, i32 0, i32 0
-  %v = load i32, ptr %v_ptr
-  ret i32 %v
+  %v = load ptr, ptr %v_ptr
+  ret ptr %v
 }
 
 ; Remove the first element in a LinkedList
@@ -182,22 +182,22 @@ exit:
 ; @param %list {LinkedList*} the list
 ; @param %link {Link*} The link
 ; @param %v {i32} The value of the link
-define void @append_list(ptr %list, ptr %link, i32 %v) {
+define void @append_list(ptr %list, ptr %link, ptr %v) {
 entry:
   %head_ptr = getelementptr %LinkedList, ptr %list, i32 0, i32 0
   %head = load ptr, ptr %head_ptr
   %is_head = icmp ne ptr %head, null
   br i1 %is_head, label %headed, label %decap
 decap:
-  call void @init_link(ptr %link, i32 %v)
+  call void @init_link(ptr %link, ptr %v)
   store ptr %link, ptr %head_ptr
   ret void
 headed:
-  call void @append(%Link* %head, %Link* %link, i32 %v)
+  call void @append(%Link* %head, %Link* %link, ptr %v)
   ret void
 }
 
-define void @prepend_list(ptr %list, ptr %link, i32 %v) {
+define void @prepend_list(ptr %list, ptr %link, ptr %v) {
 entry:
   %head_ptr = getelementptr %LinkedList, %LinkedList* %list, i32 0, i32 0
   %head = load ptr, ptr %head_ptr
@@ -205,11 +205,11 @@ entry:
   br i1 %is_null, label %decap, label %headed
 
 decap:
-  call void @init_link(ptr %link, i32 %v)
+  call void @init_link(ptr %link, ptr %v)
   store ptr %link, ptr %head
   ret void
 headed:
-  call void @prepend(ptr %head, ptr %link, i32 %v)
+  call void @prepend(ptr %head, ptr %link, ptr %v)
   store ptr %link, ptr %head_ptr
   ret void
 }
