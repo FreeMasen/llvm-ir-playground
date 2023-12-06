@@ -3,6 +3,7 @@ declare void @init_rng(ptr %rng, i32 %seed)
 declare i32 @rng_next(ptr %rng)
 
 declare i32 @printf(ptr, ...)
+declare void @llvm.trap()
 
 define void @generate_sequence(ptr %rng, i32 %max) {
 entry:
@@ -37,19 +38,17 @@ define i32 @main() {
 entry:
   %rng_size = call i32 @rng_size()
   %rng = alloca i8, i32 %rng_size
-  call void @init_rng(ptr %rng, i32 2)
+  br label %looptop
+looptop:
+  %idx = phi i32 [0, %entry], [%next, %loopbody]
+  %done = icmp uge i32 %idx, 31
+  br i1 %done, label %loopexit, label %loopbody
+loopbody:
+  %seed = shl i32 1, %idx
+  call void @init_rng(ptr %rng, i32 %seed)
   call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 25)
-  call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 255)
-  call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 2555)
-  call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 25555)
-  call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 255555)
-  call void @generate_sequence(ptr %rng, i32 25)
-  call void @init_rng(ptr %rng, i32 2555555)
-  call void @generate_sequence(ptr %rng, i32 25)
+  %next = add i32 %idx, 1
+  br label %looptop
+loopexit:
   ret i32 0
 }
