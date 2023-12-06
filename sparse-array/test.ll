@@ -8,7 +8,9 @@ declare i1 @sparse_array_remove(ptr, ptr, i32)
 declare i32 @sparse_array_next_vacant(ptr)
 declare void @llvm.trap()
 declare i32 @printf(ptr, ...)
-%SparseArray = type { i32, i32, i32, ptr }
+declare i32 @sparse_array_size()
+
+
 
 define void @print_sparse_array(ptr %sa) {
 entry:
@@ -107,7 +109,8 @@ exit:
 define i32 @main(i32 %argc, ptr %arv) {
 entry:
     %fmt = alloca [255 x i8]
-    %sa = alloca %SparseArray
+    %sa_size = call i32 @sparse_array_size()
+    %sa = alloca i8, i32 %sa_size
     call void @sparse_array_init(ptr %sa, i32 4, i32 32)
     call void @fill_sa(ptr %sa)
     call void @sparse_up(ptr %sa)

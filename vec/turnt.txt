@@ -1,0 +1,413 @@
+pushing: 1
+pushed: 1, new_cap: 1
+looked up: vec[0] = 1
+pushing: 2
+pushed: 2, new_cap: 2
+pushing: 3
+pushed: 3, new_cap: 4
+looked up: vec[0] = 1
+looked up: vec[1] = 2
+looked up: vec[2] = 3
+removed: vec[2] = 3 new len: 2
+removed: vec[1] = 2 new len: 1
+removed: vec[0] = 1 new len: 0
+pushing: 0
+pushed: 1, new_cap: 10
+pushing: 1
+pushed: 2, new_cap: 10
+pushing: 2
+pushed: 3, new_cap: 10
+pushing: 3
+pushed: 4, new_cap: 10
+pushing: 4
+pushed: 5, new_cap: 10
+pushing: 5
+pushed: 6, new_cap: 10
+pushing: 6
+pushed: 7, new_cap: 10
+pushing: 7
+pushed: 8, new_cap: 10
+pushing: 8
+pushed: 9, new_cap: 10
+pushing: 9
+pushed: 10, new_cap: 10
+pushing: 10
+pushed: 11, new_cap: 20
+pushing: 11
+pushed: 12, new_cap: 20
+pushing: 12
+pushed: 13, new_cap: 20
+pushing: 13
+pushed: 14, new_cap: 20
+pushing: 14
+pushed: 15, new_cap: 20
+pushing: 15
+pushed: 16, new_cap: 20
+pushing: 16
+pushed: 17, new_cap: 20
+pushing: 17
+pushed: 18, new_cap: 20
+pushing: 18
+pushed: 19, new_cap: 20
+pushing: 19
+pushed: 20, new_cap: 20
+pushing: 20
+pushed: 21, new_cap: 40
+pushing: 21
+pushed: 22, new_cap: 40
+pushing: 22
+pushed: 23, new_cap: 40
+pushing: 23
+pushed: 24, new_cap: 40
+pushing: 24
+pushed: 25, new_cap: 40
+pushing: 25
+pushed: 26, new_cap: 40
+pushing: 26
+pushed: 27, new_cap: 40
+pushing: 27
+pushed: 28, new_cap: 40
+pushing: 28
+pushed: 29, new_cap: 40
+pushing: 29
+pushed: 30, new_cap: 40
+pushing: 30
+pushed: 31, new_cap: 40
+pushing: 31
+pushed: 32, new_cap: 40
+pushing: 32
+pushed: 33, new_cap: 40
+pushing: 33
+pushed: 34, new_cap: 40
+pushing: 34
+pushed: 35, new_cap: 40
+pushing: 35
+pushed: 36, new_cap: 40
+pushing: 36
+pushed: 37, new_cap: 40
+pushing: 37
+pushed: 38, new_cap: 40
+pushing: 38
+pushed: 39, new_cap: 40
+pushing: 39
+pushed: 40, new_cap: 40
+pushing: 40
+pushed: 41, new_cap: 80
+pushing: 41
+pushed: 42, new_cap: 80
+pushing: 42
+pushed: 43, new_cap: 80
+pushing: 43
+pushed: 44, new_cap: 80
+pushing: 44
+pushed: 45, new_cap: 80
+pushing: 45
+pushed: 46, new_cap: 80
+pushing: 46
+pushed: 47, new_cap: 80
+pushing: 47
+pushed: 48, new_cap: 80
+pushing: 48
+pushed: 49, new_cap: 80
+pushing: 49
+pushed: 50, new_cap: 80
+pushing: 50
+pushed: 51, new_cap: 80
+pushing: 51
+pushed: 52, new_cap: 80
+pushing: 52
+pushed: 53, new_cap: 80
+pushing: 53
+pushed: 54, new_cap: 80
+pushing: 54
+pushed: 55, new_cap: 80
+pushing: 55
+pushed: 56, new_cap: 80
+pushing: 56
+pushed: 57, new_cap: 80
+pushing: 57
+pushed: 58, new_cap: 80
+pushing: 58
+pushed: 59, new_cap: 80
+pushing: 59
+pushed: 60, new_cap: 80
+pushing: 60
+pushed: 61, new_cap: 80
+pushing: 61
+pushed: 62, new_cap: 80
+pushing: 62
+pushed: 63, new_cap: 80
+pushing: 63
+pushed: 64, new_cap: 80
+pushing: 64
+pushed: 65, new_cap: 80
+pushing: 65
+pushed: 66, new_cap: 80
+pushing: 66
+pushed: 67, new_cap: 80
+pushing: 67
+pushed: 68, new_cap: 80
+pushing: 68
+pushed: 69, new_cap: 80
+pushing: 69
+pushed: 70, new_cap: 80
+pushing: 70
+pushed: 71, new_cap: 80
+pushing: 71
+pushed: 72, new_cap: 80
+pushing: 72
+pushed: 73, new_cap: 80
+pushing: 73
+pushed: 74, new_cap: 80
+pushing: 74
+pushed: 75, new_cap: 80
+pushing: 75
+pushed: 76, new_cap: 80
+pushing: 76
+pushed: 77, new_cap: 80
+pushing: 77
+pushed: 78, new_cap: 80
+pushing: 78
+pushed: 79, new_cap: 80
+pushing: 79
+pushed: 80, new_cap: 80
+pushing: 80
+pushed: 81, new_cap: 160
+pushing: 81
+pushed: 82, new_cap: 160
+pushing: 82
+pushed: 83, new_cap: 160
+pushing: 83
+pushed: 84, new_cap: 160
+pushing: 84
+pushed: 85, new_cap: 160
+pushing: 85
+pushed: 86, new_cap: 160
+pushing: 86
+pushed: 87, new_cap: 160
+pushing: 87
+pushed: 88, new_cap: 160
+pushing: 88
+pushed: 89, new_cap: 160
+pushing: 89
+pushed: 90, new_cap: 160
+pushing: 90
+pushed: 91, new_cap: 160
+pushing: 91
+pushed: 92, new_cap: 160
+pushing: 92
+pushed: 93, new_cap: 160
+pushing: 93
+pushed: 94, new_cap: 160
+pushing: 94
+pushed: 95, new_cap: 160
+pushing: 95
+pushed: 96, new_cap: 160
+pushing: 96
+pushed: 97, new_cap: 160
+pushing: 97
+pushed: 98, new_cap: 160
+pushing: 98
+pushed: 99, new_cap: 160
+pushing: 99
+pushed: 100, new_cap: 160
+looked up: vec[0] = 0
+looked up: vec[1] = 1
+looked up: vec[2] = 2
+looked up: vec[3] = 3
+looked up: vec[4] = 4
+looked up: vec[5] = 5
+looked up: vec[6] = 6
+looked up: vec[7] = 7
+looked up: vec[8] = 8
+looked up: vec[9] = 9
+looked up: vec[10] = 10
+looked up: vec[11] = 11
+looked up: vec[12] = 12
+looked up: vec[13] = 13
+looked up: vec[14] = 14
+looked up: vec[15] = 15
+looked up: vec[16] = 16
+looked up: vec[17] = 17
+looked up: vec[18] = 18
+looked up: vec[19] = 19
+looked up: vec[20] = 20
+looked up: vec[21] = 21
+looked up: vec[22] = 22
+looked up: vec[23] = 23
+looked up: vec[24] = 24
+looked up: vec[25] = 25
+looked up: vec[26] = 26
+looked up: vec[27] = 27
+looked up: vec[28] = 28
+looked up: vec[29] = 29
+looked up: vec[30] = 30
+looked up: vec[31] = 31
+looked up: vec[32] = 32
+looked up: vec[33] = 33
+looked up: vec[34] = 34
+looked up: vec[35] = 35
+looked up: vec[36] = 36
+looked up: vec[37] = 37
+looked up: vec[38] = 38
+looked up: vec[39] = 39
+looked up: vec[40] = 40
+looked up: vec[41] = 41
+looked up: vec[42] = 42
+looked up: vec[43] = 43
+looked up: vec[44] = 44
+looked up: vec[45] = 45
+looked up: vec[46] = 46
+looked up: vec[47] = 47
+looked up: vec[48] = 48
+looked up: vec[49] = 49
+looked up: vec[50] = 50
+looked up: vec[51] = 51
+looked up: vec[52] = 52
+looked up: vec[53] = 53
+looked up: vec[54] = 54
+looked up: vec[55] = 55
+looked up: vec[56] = 56
+looked up: vec[57] = 57
+looked up: vec[58] = 58
+looked up: vec[59] = 59
+looked up: vec[60] = 60
+looked up: vec[61] = 61
+looked up: vec[62] = 62
+looked up: vec[63] = 63
+looked up: vec[64] = 64
+looked up: vec[65] = 65
+looked up: vec[66] = 66
+looked up: vec[67] = 67
+looked up: vec[68] = 68
+looked up: vec[69] = 69
+looked up: vec[70] = 70
+looked up: vec[71] = 71
+looked up: vec[72] = 72
+looked up: vec[73] = 73
+looked up: vec[74] = 74
+looked up: vec[75] = 75
+looked up: vec[76] = 76
+looked up: vec[77] = 77
+looked up: vec[78] = 78
+looked up: vec[79] = 79
+looked up: vec[80] = 80
+looked up: vec[81] = 81
+looked up: vec[82] = 82
+looked up: vec[83] = 83
+looked up: vec[84] = 84
+looked up: vec[85] = 85
+looked up: vec[86] = 86
+looked up: vec[87] = 87
+looked up: vec[88] = 88
+looked up: vec[89] = 89
+looked up: vec[90] = 90
+looked up: vec[91] = 91
+looked up: vec[92] = 92
+looked up: vec[93] = 93
+looked up: vec[94] = 94
+looked up: vec[95] = 95
+looked up: vec[96] = 96
+looked up: vec[97] = 97
+looked up: vec[98] = 98
+looked up: vec[99] = 99
+removed: vec[0] = 0 new len: 99
+removed: vec[0] = 1 new len: 98
+removed: vec[0] = 2 new len: 97
+removed: vec[0] = 3 new len: 96
+removed: vec[0] = 4 new len: 95
+removed: vec[0] = 5 new len: 94
+removed: vec[0] = 6 new len: 93
+removed: vec[0] = 7 new len: 92
+removed: vec[0] = 8 new len: 91
+removed: vec[0] = 9 new len: 90
+removed: vec[0] = 10 new len: 89
+removed: vec[0] = 11 new len: 88
+removed: vec[0] = 12 new len: 87
+removed: vec[0] = 13 new len: 86
+removed: vec[0] = 14 new len: 85
+removed: vec[0] = 15 new len: 84
+removed: vec[0] = 16 new len: 83
+removed: vec[0] = 17 new len: 82
+removed: vec[0] = 18 new len: 81
+removed: vec[0] = 19 new len: 80
+removed: vec[0] = 20 new len: 79
+removed: vec[0] = 21 new len: 78
+removed: vec[0] = 22 new len: 77
+removed: vec[0] = 23 new len: 76
+removed: vec[0] = 24 new len: 75
+removed: vec[0] = 25 new len: 74
+removed: vec[0] = 26 new len: 73
+removed: vec[0] = 27 new len: 72
+removed: vec[0] = 28 new len: 71
+removed: vec[0] = 29 new len: 70
+removed: vec[0] = 30 new len: 69
+removed: vec[0] = 31 new len: 68
+removed: vec[0] = 32 new len: 67
+removed: vec[0] = 33 new len: 66
+removed: vec[0] = 34 new len: 65
+removed: vec[0] = 35 new len: 64
+removed: vec[0] = 36 new len: 63
+removed: vec[0] = 37 new len: 62
+removed: vec[0] = 38 new len: 61
+removed: vec[0] = 39 new len: 60
+removed: vec[0] = 40 new len: 59
+removed: vec[0] = 41 new len: 58
+removed: vec[0] = 42 new len: 57
+removed: vec[0] = 43 new len: 56
+removed: vec[0] = 44 new len: 55
+removed: vec[0] = 45 new len: 54
+removed: vec[0] = 46 new len: 53
+removed: vec[0] = 47 new len: 52
+removed: vec[0] = 48 new len: 51
+removed: vec[0] = 49 new len: 50
+removed: vec[0] = 50 new len: 49
+removed: vec[0] = 51 new len: 48
+removed: vec[0] = 52 new len: 47
+removed: vec[0] = 53 new len: 46
+removed: vec[0] = 54 new len: 45
+removed: vec[0] = 55 new len: 44
+removed: vec[0] = 56 new len: 43
+removed: vec[0] = 57 new len: 42
+removed: vec[0] = 58 new len: 41
+removed: vec[0] = 59 new len: 40
+removed: vec[0] = 60 new len: 39
+removed: vec[0] = 61 new len: 38
+removed: vec[0] = 62 new len: 37
+removed: vec[0] = 63 new len: 36
+removed: vec[0] = 64 new len: 35
+removed: vec[0] = 65 new len: 34
+removed: vec[0] = 66 new len: 33
+removed: vec[0] = 67 new len: 32
+removed: vec[0] = 68 new len: 31
+removed: vec[0] = 69 new len: 30
+removed: vec[0] = 70 new len: 29
+removed: vec[0] = 71 new len: 28
+removed: vec[0] = 72 new len: 27
+removed: vec[0] = 73 new len: 26
+removed: vec[0] = 74 new len: 25
+removed: vec[0] = 75 new len: 24
+removed: vec[0] = 76 new len: 23
+removed: vec[0] = 77 new len: 22
+removed: vec[0] = 78 new len: 21
+removed: vec[0] = 79 new len: 20
+removed: vec[0] = 80 new len: 19
+removed: vec[0] = 81 new len: 18
+removed: vec[0] = 82 new len: 17
+removed: vec[0] = 83 new len: 16
+removed: vec[0] = 84 new len: 15
+removed: vec[0] = 85 new len: 14
+removed: vec[0] = 86 new len: 13
+removed: vec[0] = 87 new len: 12
+removed: vec[0] = 88 new len: 11
+removed: vec[0] = 89 new len: 10
+removed: vec[0] = 90 new len: 9
+removed: vec[0] = 91 new len: 8
+removed: vec[0] = 92 new len: 7
+removed: vec[0] = 93 new len: 6
+removed: vec[0] = 94 new len: 5
+removed: vec[0] = 95 new len: 4
+removed: vec[0] = 96 new len: 3
+removed: vec[0] = 97 new len: 2
+removed: vec[0] = 98 new len: 1
+removed: vec[0] = 99 new len: 0

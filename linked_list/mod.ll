@@ -6,6 +6,20 @@
 ; @field next the pointer to the next value in the list, null if this is the tail 
 %Link = type { i32, ptr }
 
+define i32 @linked_list_size() {
+entry:
+  %size_ptr = getelementptr [1 x %LinkedList], ptr null, i32 1
+  %size = ptrtoint ptr %size_ptr to i32
+  ret i32 %size
+}
+
+define i32 @link_size() {
+entry:
+  %size_ptr = getelementptr [1 x %Link], ptr null, i32 1
+  %size = ptrtoint ptr %size_ptr to i32
+  ret i32 %size
+}
+
 ; Initialize a linked list with a `null` pointer as `head`
 ; @param %dest {%LinkedList*} the pointer to initialize
 define void @init_list(ptr sret(%LinkedList) %dest) {
@@ -108,6 +122,27 @@ start:
   ret void
 }
 
+define ptr @linked_list_front(ptr %list) {
+entry:
+  %head_ptr = getelementptr %LinkedList, ptr %list, i32 0, i32 0
+  %ret = load ptr, ptr %head_ptr
+  ret ptr %ret
+}
+
+define ptr @link_next(ptr %node) {
+entry:
+  %el_ptr = getelementptr %Link, ptr %node, i32 0, i32 1
+  %el = load ptr, ptr %el_ptr
+  ret ptr %el
+}
+
+define i32 @link_value(ptr %node) {
+entry:
+  %v_ptr = getelementptr %Link, ptr %node, i32 0, i32 0
+  %v = load i32, ptr %v_ptr
+  ret i32 %v
+}
+
 ; Remove the first element in a LinkedList
 ; @param %list {LinkedList*} The list to remove the element from
 ; @return {%Link*}
@@ -119,6 +154,7 @@ define ptr @pop_front(ptr %list) {
   store ptr %new_head, ptr %head_ptr
   ret ptr %ret
 }
+
 ; Remove the last element in a LinkedList
 ; @param %list {LinkedList*} The list to remove the element from
 ; @return {%Link*}

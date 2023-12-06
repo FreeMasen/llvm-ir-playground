@@ -13,6 +13,14 @@ declare void @free(ptr)
 declare void @llvm.memcpy.p0.p0.i32(ptr, ptr, i32, i1)
 declare void @llvm.memset.p0.i32(ptr, i8, i32, i1)
 declare i32 @printf(ptr, ...)
+
+define i32 @vec_size() {
+entry:
+    %size_ptr = getelementptr [1 x %Vec], ptr null, i32 1
+    %size = ptrtoint ptr %size_ptr to i32
+    ret i32 %size
+}
+
 ; initialize a vector for an element size
 ; @param vec {%Vec*} The pointer to initialize
 ; @param el_size {i32} The size of each value in the collection
@@ -27,12 +35,7 @@ entry:
 ; @param el_size {i32} The size of each value in the collection
 define void @vec_init_with_capacity(ptr sret(%Vec) %vec, i32 %el_size, i32 %cap) {
 entry:
-    %fmt = alloca [255 x i8]
-    store [41 x i8] c"vec_init_with_capacity: el: %u, cap: %u\0A\00", ptr %fmt
-    call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
-    ; calculate the size of a %Vec, taking into account the target's ptr width
-    %size_ptr = getelementptr [1 x %Vec], ptr null, i32 1
-    %size = ptrtoint ptr %size_ptr to i32
+    %size = call i32 @vec_size()
     ; set the provided %vec to all 0 values
     call void @llvm.memset.p0.i32(ptr %vec, i8 0, i32 %size, i1 false)
     ; get the size property pointer from the now zeroed memory
@@ -44,7 +47,6 @@ entry:
     %done = icmp eq i32 %cap, 0
     br i1 %done, label %exit, label %nonzero
 nonzero:
-    store [33 x i8] c"vec_init_with_capacity->nonzero\0A\00", ptr %fmt
     ; calculate the raw bytes needed to store the buffer with a capacity of %cap
     %buf_size = mul i32 %el_size, %cap
     ; allocate the buffer
@@ -55,9 +57,6 @@ nonzero:
     store ptr %buf, ptr %buf_ptr
     br label %exit
 exit:
-    store [30 x i8] c"vec_init_with_capacity->exit\0A\00", ptr %fmt
-    
-    call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
     ret void
 }
 

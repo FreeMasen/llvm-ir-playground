@@ -9,9 +9,9 @@ declare void @vec_bump_capacity(ptr %vec)
 declare void @vec_push(ptr %vec, ptr %element)
 declare ptr @vec_get(ptr %vec, i32 %idx)
 declare ptr @vec_remove(ptr %vec, i32 %idx)
+declare i32 @vec_size()
+
 declare void @llvm.trap()
-%Slice = type { i32, ptr }
-%Vec = type { i32, i32, %Slice }
 
 define void @push_and_print(ptr %vec, i32 %v) {
 entry:
@@ -106,7 +106,8 @@ loopexit:
 define i32 @main(i32 %argc, ptr %arv) {
 entry:
     %fmt = alloca [255 x i8]
-    %v = alloca %Vec
+    %vec_size = call i32 @vec_size()
+    %v = alloca i8, i32 %vec_size
     call void @vec_init(ptr %v, i32 4)
     call void @push_and_print(ptr %v, i32 1)
     call void @lookup_and_print(ptr %v, i32 0)
@@ -119,7 +120,7 @@ entry:
     call void @remove_and_print(ptr %v, i32 1)
     call void @remove_and_print(ptr %v, i32 0)
 
-    %v2 = alloca %Vec
+    %v2 = alloca i8, i32 %vec_size
     call void @vec_init_with_capacity(ptr %v2, i32 4, i32 10)
     call void @push_loop(ptr %v2, i32 100)
     call void @get_loop(ptr %v2, i32 100)

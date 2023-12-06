@@ -9,11 +9,17 @@
 ; the resut is rotation by c
 declare i32 @llvm.fshl.i32(i32 %a, i32 %b, i32 %c)
 
+define i32 @fx_hasher_size() {
+    %size_ptr = getelementptr [1 x %FxHasher], ptr null, i32 1
+    %size = ptrtoint ptr %size_ptr to i32
+    ret i32 %size
+}
+
 ; write a u32 to the hasher's state
 ;
 ; @param %hasher {FxHasher*} The hasher
 ; @param %v {i32} The value to write to the state
-define void @fx_hasher_hash_u32(ptr %hasher, i32 %v) {
+define void @fx_hasher_write_u32(ptr %hasher, i32 %v) {
 entry:
     %curr_ptr = getelementptr %FxHasher, ptr %hasher, i32 0, i32 0
     %curr = load i32, ptr %curr_ptr
@@ -30,7 +36,7 @@ entry:
 ; @param %v {i8} The value to write to the state
 define void @fx_hasher_write_u8(ptr %hasher, i8 %v) {
     %wrd = zext i8 %v to i32
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 %wrd)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 %wrd)
     ret void
 }
 
@@ -43,8 +49,8 @@ define void @fx_hasher_write_u64(ptr %hasher, i64 %v) {
     %wrd1 = trunc i64 %v to i32
     %wrd2_pre = lshr i64 %v, 32
     %wrd2 = trunc i64 %wrd2_pre to i32
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 %wrd1)
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 %wrd2)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 %wrd1)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 %wrd2)
     ret void
 }
 
@@ -71,12 +77,12 @@ entry:
 only_one:
     %one = load i8, ptr %buf
     %one_ext = zext i8 %one to i32
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 %one_ext)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 %one_ext)
     ret i32 1
 at_least_four:
     %b4 = getelementptr inbounds [4 x i8], ptr %buf, i32 0, i32 0
     %i4 = load i32, ptr %b4
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 %i4)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 %i4)
     ret i32 4
 }
 
@@ -99,7 +105,7 @@ loopbody:
     %next_ptr = getelementptr [5 x i8], ptr %buf_ptr, i32 0, i32 %removed
     br label %looptop
 exit:
-    call void @fx_hasher_hash_u32(ptr %hasher, i32 255)
+    call void @fx_hasher_write_u32(ptr %hasher, i32 255)
     ret void
 }
 

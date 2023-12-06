@@ -1,7 +1,7 @@
 ; ModuleID = 'sparse-array'
 source_filename = "sparse-array.ll"
 
-; A growable collection of a generic type
+; A sparse collection of a generic type
 ; @field capacity {i32} The current element count
 ; @field element_size {i32} The size of each element in the collection
 ; @field bitmap {i32} A bitmap for looking up if an entry is populated
@@ -12,19 +12,21 @@ declare ptr @malloc(i32)
 declare void @free(ptr)
 declare void @llvm.memcpy.p0.p0.i32(ptr, ptr, i32, i1)
 declare void @llvm.memset.p0.i32(ptr, i8, i32, i1)
-; declare i32 @printf(ptr, ...)
+
+define i32 @sparse_array_size() {
+    %size_ptr = getelementptr [1 x %SparseArray], ptr null, i32 1
+    %size = ptrtoint ptr %size_ptr to i32
+    ret i32 %size
+}
 
 ; initialize an array for an element size
 ; @param sa {%SparseArray*} The pointer to initialize
 ; @param el_size {i32} The size of each value in the collection
+; @param cap {i32} The maximum number of elements for this collection
 define void @sparse_array_init(ptr sret(%SparseArray) %sa, i32 %el_size, i32 %cap) {
 entry:
-    %fmt = alloca [255 x i8]
-    store [36 x i8] c"sparse_array_init: el: %u, cap: %u\0A\00", ptr %fmt
-    ; call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
     ; calculate the size of a %SparseArray, taking into account the target's ptr width
-    %size_ptr = getelementptr [1 x %SparseArray], ptr null, i32 1
-    %size = ptrtoint ptr %size_ptr to i32
+    %size = call i32 @sparse_array_size()
     ; set the provided %sa to all 0 values
     call void @llvm.memset.p0.i32(ptr %sa, i8 0, i32 %size, i1 false)
     ; get the size property pointer from the now zeroed memory
@@ -36,7 +38,6 @@ entry:
     %done = icmp eq i32 %cap, 0
     br i1 %done, label %exit, label %nonzero
 nonzero:
-    store [28 x i8] c"sparse_array_init->nonzero\0A\00", ptr %fmt
     ; calculate the raw bytes needed to store the buffer with a capacity of %cap
     %buf_size = mul i32 %el_size, %cap
     ; allocate the buffer
@@ -47,8 +48,6 @@ nonzero:
     store ptr %buf, ptr %buf_ptr
     br label %exit
 exit:
-    store [25 x i8] c"sparse_array_init->exit\0A\00", ptr %fmt
-    ; call i32 @printf(ptr %fmt, i32 %el_size, i32 %cap)
     ret void
 }
 
@@ -76,6 +75,7 @@ entry:
     ret i32 %size
 }
 
+; get the bitmap for this array
 define i32 @sparse_array_bitmap(ptr %sa) {
 entry:
     %ptr = getelementptr %SparseArray, ptr %sa, i32 0, i32 2
@@ -83,6 +83,7 @@ entry:
     ret i32 %map
 }
 
+; set the bitmap in this array
 define void @sparse_array_set_bitmap(ptr %sa, i32 %new) {
 entry:
     %ptr = getelementptr %SparseArray, ptr %sa, i32 0, i32 2
@@ -90,33 +91,29 @@ entry:
     ret void
 }
 
+; lookup the next vacant index in this array
+; returns -1 when there is no space available
 define i32 @sparse_array_next_vacant(ptr %sa) {
 entry:
-    %fmt = alloca [255 x i8]
     %map = call i32 @sparse_array_bitmap(ptr %sa)
     br label %looptop
 looptop:
     %idx = phi i32 [0, %entry], [%next_idx, %loopbody]
-    store [38 x i8] c"sparse_array_next_vacant->looptop %u\0A\00", ptr %fmt
-    ; call i32 @printf(ptr %fmt, i32 %idx)
     %done = icmp uge i32 %idx, 32
     br i1 %done, label %full, label %loopbody
 loopbody:
     %mask = shl i32 1, %idx
     %anded = and i32 %mask, %map
-    store [47 x i8] c"sparse_array_next_vacant->loopbody %u, %u, %u\0A\00", ptr %fmt
-    ; call i32 @printf(ptr %fmt, i32 %idx, i32 %mask, i32 %anded)
     %is_full = icmp ugt i32 %anded, 0
     %next_idx = add i32 %idx, 1
     br i1 %is_full, label %looptop, label %exit
 exit:
-    store [35 x i8] c"sparse_array_next_vacant->exit %u\0A\00", ptr %fmt
-    ; call i32 @printf(ptr %fmt, i32 %idx)
     ret i32 %idx
 full:
     ret i32 -1
 }
 
+; set a single bit in the bitmap based on the index provided
 define void @sparse_array_set_bit(ptr %sa, i32 %idx) {
 entry:
     %mask = shl i32 1, %idx
@@ -126,6 +123,7 @@ entry:
     ret void
 }
 
+; unset a single bit in the bitmap based on the index provided
 define void @sparse_array_unset_bit(ptr %sa, i32 %idx) {
 entry:
     %mask = shl i32 1, %idx
@@ -135,6 +133,7 @@ entry:
     ret void
 }
 
+; lookup if the element at the provided index is not empty
 define i1 @sparse_array_is_set(ptr %sa, i32 %idx) {
 entry:
     %max_idx = call i32 @sparse_array_capacity(ptr %sa)
@@ -166,11 +165,9 @@ entry:
 inrange:
     %el_size = call i32 @sparse_array_el_size(ptr %sa)
     %offset_idx = mul i32 %el_size, %idx
-    ; lookup the slice pointer
     %buf_ptr = getelementptr %SparseArray, ptr %sa, i32 0, i32 3
     %buf = load ptr, ptr %buf_ptr
     %offset = getelementptr [0 x i8], ptr %buf, i32 0, i32 %offset_idx
-    ; copy the element into the offset
     call void @llvm.memcpy.p0.p0.i32(ptr %offset, ptr %element, i32 %el_size, i1 0)
     call void @sparse_array_set_bit(ptr %sa, i32 %idx)
     ret i1 1
@@ -183,6 +180,7 @@ oor:
 ; `memcpy` from the provided `ptr` to the arrays's backing store
 ; @param sa {%SparseArray*}
 ; @param element {i8*|T*}
+; @returns {i1} 0 if the array is full; 1 if the element was inserted
 define i1 @sparse_array_push(ptr %sa, ptr %element) {
 entry:
     %next_vacant = call i32 @sparse_array_next_vacant(ptr %sa)
@@ -218,7 +216,7 @@ empty:
 ; @param sa {%SparseArray*} The array
 ; @param dest {[size x i8]*} The destination to store the removed element
 ; @param idx {i32} the zero based index to be removed
-; @return i1 0 if the idx is out of range or not populated, 
+; @return i1 0 if the idx is out of range or not populated; 
 ;            1 if the element was removed and placed in `dest`
 define i1 @sparse_array_remove(ptr %sa, ptr %dest, i32 %idx) {
 entry:

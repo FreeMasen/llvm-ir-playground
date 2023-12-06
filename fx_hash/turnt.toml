@@ -1,0 +1,2 @@
+command = "./run.sh"
+output.txt = "-"
