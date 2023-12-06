@@ -48,6 +48,9 @@ jobs:
       - name: update path (MacOS)
         if: runner.os == 'Macos'
         run: echo "${{ github.workspace }}/llvm/bin" >> $GITHUB_PATH
+      - name: update path (Windows)
+        if: runner.os == 'Windows'
+        run: echo "C:\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Install turnt
         run: pip install turnt
       - name: run tests
