@@ -12,11 +12,20 @@ declare ptr @malloc(i32)
 declare void @free(ptr)
 declare void @llvm.memcpy.p0.p0.i32(ptr, ptr, i32, i1)
 declare void @llvm.memset.p0.i32(ptr, i8, i32, i1)
+declare i32 @llvm.ctpop.i32(i32)
 
 define i32 @sparse_array_size() {
     %size_ptr = getelementptr [1 x %SparseArray], ptr null, i32 1
     %size = ptrtoint ptr %size_ptr to i32
     ret i32 %size
+}
+
+define i32 @sparse_array_free_space(ptr %sa) {
+entry:
+    %map = call i32 @sparse_array_bitmap(ptr %sa)
+    %pop = call i32 @llvm.ctpop.i32(i32 %map)
+    %ret = sub i32 32, %pop
+    ret i32 %ret
 }
 
 ; initialize an array for an element size

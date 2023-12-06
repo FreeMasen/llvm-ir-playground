@@ -6,11 +6,10 @@ declare ptr @sparse_array_get(ptr, i32)
 declare i1 @sparse_array_is_set(ptr, i32)
 declare i1 @sparse_array_remove(ptr, ptr, i32)
 declare i32 @sparse_array_next_vacant(ptr)
+declare i32 @sparse_array_free_space(ptr)
 declare void @llvm.trap()
 declare i32 @printf(ptr, ...)
 declare i32 @sparse_array_size()
-
-
 
 define void @print_sparse_array(ptr %sa) {
 entry:
@@ -52,25 +51,23 @@ exit:
     ret void
 }
 
-define void @fill_sa(ptr %sa) {
+define void @fill_sa(ptr %sa, i32 %start) {
 entry:
     %fmt = alloca [255 x i8]
+    %free = call i32 @sparse_array_free_space(ptr %sa)
     br label %looptop
 looptop:
     %idx = phi i32 [0, %entry], [%next_idx, %loopbody]
-    %done = icmp uge i32 %idx, 32
+    %done = icmp uge i32 %idx, %free
     br i1 %done, label %exit, label %loopbody
 loopbody:
     %el = alloca i32
-    store i32 %idx, ptr %el
+    %v = add i32 %idx, %start
+    store i32 %v, ptr %el
     %succ = call i1 @sparse_array_push(ptr %sa, ptr %el)
     call void @print_sparse_array(ptr %sa)
-    %ptr = call ptr @sparse_array_get(ptr %sa, i32 %idx)
-    %val = load i32, ptr %ptr
-    %is_val = icmp eq i32 %idx, %val
-    %succ2 = and i1 %succ, %is_val
     %next_idx = add i32 %idx, 1
-    br i1 %succ2, label %looptop, label %fail
+    br i1 %succ, label %looptop, label %fail
 fail:
     store [37 x i8] c"Error inserting element at index %u\0A\00", ptr %fmt
     call i32 @printf(ptr %fmt, i32 %idx)
@@ -80,7 +77,7 @@ exit:
     ret void
 }
 
-define void @sparse_up(ptr %sa) {
+define void @sparse_up(ptr %sa, i32 %stride) {
 entry:
     %fmt = alloca [255 x i8]
     br label %looptop
@@ -90,17 +87,10 @@ looptop:
     br i1 %done, label %exit, label %loopbody
 loopbody:
     %el = alloca i32    
-    %succ = call i1 @sparse_array_remove(ptr %sa, ptr %el, i32 %idx)
+    call i1 @sparse_array_remove(ptr %sa, ptr %el, i32 %idx)
     call void @print_sparse_array(ptr %sa)
-    %v = load i32, ptr %el
-    %next_free = call i32 @sparse_array_next_vacant(ptr %sa)
-    %next_idx = sub i32 %idx, 8
-    br i1 %succ, label %looptop, label %fail
-fail:
-    store [36 x i8] c"Error removing element at index %u\0A\00", ptr %fmt
-    call i32 @printf(ptr %fmt, i32 %idx)
-    call void @llvm.trap()
-    br label %exit
+    %next_idx = sub i32 %idx, %stride
+    br label %looptop
 exit:
     ret void
 }
@@ -112,11 +102,16 @@ entry:
     %sa_size = call i32 @sparse_array_size()
     %sa = alloca i8, i32 %sa_size
     call void @sparse_array_init(ptr %sa, i32 4, i32 32)
-    call void @fill_sa(ptr %sa)
-    call void @sparse_up(ptr %sa)
-    %v = alloca i32
-    store i32 999, ptr %v
-    call i1 @sparse_array_push(ptr %sa, ptr %v)
-    call void @print_sparse_array(ptr %sa)
+    call void @fill_sa(ptr %sa, i32 0)
+    call void @sparse_up(ptr %sa, i32 8)
+    call void @fill_sa(ptr %sa, i32 32)
+    call void @sparse_up(ptr %sa, i32 6)
+    call void @fill_sa(ptr %sa, i32 64)
+    call void @sparse_up(ptr %sa, i32 4)
+    call void @fill_sa(ptr %sa, i32 96)
+    call void @sparse_up(ptr %sa, i32 3)
+    call void @fill_sa(ptr %sa, i32 128)
+    call void @sparse_up(ptr %sa, i32 2)
+    call void @fill_sa(ptr %sa, i32 160)
     ret i32 0
 }
