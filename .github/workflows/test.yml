@@ -14,16 +14,37 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-20.04
           - windows-latest
           - macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install LLVM and Clang
-        uses: KyleMayes/install-llvm-action@v1.8.3
+      - name: Install LLVM and Clang (Linux)
+        if: runner.os == 'Linux'
+        uses: KyleMayes/install-llvm-action@v1.9.0
         with:
-          version: 16
+          download-url: https://github.com/FreeMasen/llvm-builds/releases/download/v16.0.6
+          force-version: true
+          ubuntu-version: 20.04
+          version: 16.0.6
+          directory: ${{ github.workspace }}/llvm
+      - name: Install LLVM and Clang (Windows)
+        if: runner.os == 'Windows'
+        uses: KyleMayes/install-llvm-action@v1.9.0
+        with:
+          download-url: https://github.com/FreeMasen/llvm-builds/releases/download/v16.0.6
+          force-version: true
+          directory: C:\LLVM
+          version: 16.0.6
+      - name: Install LLVM and Clang (MacOS)
+        if: runner.os == 'Macos'
+        uses: KyleMayes/install-llvm-action@v1.9.0
+        with:
+          download-url: https://github.com/FreeMasen/llvm-builds/releases/download/v16.0.6
+          force-version: true
+          version: 16.0.6
+          directory: ${{ github.workspace }}/llvm
       - name: Install turnt
         run: pip install turnt
       - name: run tests
