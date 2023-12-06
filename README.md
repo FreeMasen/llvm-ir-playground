@@ -21,5 +21,6 @@ currently written with llvm 16
 
 - [fx_hash](./fx_hash/README.md): A very simple hashing algorithm
 - [linked_list](./linked_list/README.md): A linked list of 32bit integers
+- [rng](./rng/README.md): The Middle Square Weyl Sequence pseudo random number generator
 - [sparse-array](./sparse-array/README.md): A sparse array of equally sized elements
 - [vec](./vec/README.md): A contiguous, growable array of equally sized elements
