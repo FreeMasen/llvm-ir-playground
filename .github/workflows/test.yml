@@ -45,6 +45,9 @@ jobs:
           force-version: true
           version: 16.0.6
           directory: ${{ github.workspace }}/llvm
+      - name: update path (MacOS)
+        if: runner.os == 'Macos'
+        run: echo "${{ github.workspace }}/llvm/bin" >> $GITHUB_PATH
       - name: Install turnt
         run: pip install turnt
       - name: run tests
