@@ -13,6 +13,11 @@ Each experiment should have a `run.sh` file with the command needed to run the t
 tests are not at all automated but instead are just reporting some of the behavior of each
 experiment via `printf`.
 
+## Building Tests
+
+Each experiment should have a `build.sh` file with the command needed to build an executable
+for each of the tests.
+
 ## LLVM Version
 
 currently written with llvm 16
