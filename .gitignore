@@ -1,3 +1,4 @@
 *.bc
 target/
 *_test
+**/*.o
